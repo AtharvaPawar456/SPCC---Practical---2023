@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char *isInMot(const char *symbol) {
+const char *isInMot(const char *symbol)
+{
   FILE *fp;
   char line[255];
 
   fp = fopen("mot.txt", "r");
-  while (fgets(line, sizeof(line), fp) != NULL) {
+  while (fgets(line, sizeof(line), fp) != NULL)
+  {
     const char *val1 = strtok(line, " ");
 
     if (strcmp(val1, symbol) != 0)
@@ -22,13 +24,15 @@ const char *isInMot(const char *symbol) {
   return NULL;
 }
 
-const char *isInSymbolTable(const char *symbol) {
+const char *isInSymbolTable(const char *symbol)
+{
   FILE *fp;
   char line[255];
 
   fp = fopen("symbol_table.txt", "r");
 
-  while (fgets(line, sizeof(line), fp) != NULL) {
+  while (fgets(line, sizeof(line), fp) != NULL)
+  {
     char *val1 = strtok(line, " ");
     char *val2 = strtok(NULL, " ");
     char *temp = malloc(strlen(val1) + 1);
@@ -46,26 +50,32 @@ const char *isInSymbolTable(const char *symbol) {
   return NULL;
 }
 
-int pass1() {
+int pass1()
+{
   FILE *fp, *fw;
   char line[255];
   int line_no = 0;
 
   fw = fopen("symbol_table.txt", "w");
   fp = fopen("input.txt", "r");
-  while (fgets(line, sizeof(line), fp) != NULL) {
+  while (fgets(line, sizeof(line), fp) != NULL)
+  {
     const char *val1 = strtok(line, " ");
     const char *val2 = strtok(NULL, " ");
     const char *val3 = strtok(NULL, " ");
 
-    if (val2 == NULL) {
+    if (val2 == NULL)
+    {
       // One token
       printf("%d\t%s\n", line_no, val1);
-    } else if (val3 == NULL) {
+    }
+    else if (val3 == NULL)
+    {
       // Two tokens
       printf("%d\t%s|%s", line_no, val1, val2);
 
-      if (strcmp(val2, "START\n") == 0 || strcmp(val1, "USING") == 0) {
+      if (strcmp(val2, "START\n") == 0 || strcmp(val1, "USING") == 0)
+      {
         // printf("Skip iteration\n");
         continue;
       }
@@ -75,10 +85,14 @@ int pass1() {
         printf("Char not found. %s\n", val1);
 
       line_no += 4;
-    } else {
+    }
+    else
+    {
       // Three Tokens
-      if (isInMot(val1) == NULL) {
-        switch (*val3) {
+      if (isInMot(val1) == NULL)
+      {
+        switch (*val3)
+        {
         case 'F':
           line_no += 4;
           break;
@@ -101,7 +115,8 @@ int pass1() {
   return 0;
 }
 
-int pass2() {
+int pass2()
+{
   FILE *fp, *fs, *fw, *fb;
   char line[255];
   int line_no = 0;
@@ -109,23 +124,29 @@ int pass2() {
   fw = fopen("output.txt", "w");
   fs = fopen("symbol_table.txt", "r");
   fp = fopen("input.txt", "r");
-  while (fgets(line, sizeof(line), fp) != NULL) {
+  while (fgets(line, sizeof(line), fp) != NULL)
+  {
     char *val1 = strtok(line, " ");
     char *val2 = strtok(NULL, " ");
     char *val3 = strtok(NULL, " ");
 
-    if (val2 == NULL) {
+    if (val2 == NULL)
+    {
       // One token
       printf("%d\t%s", line_no, val1);
       fprintf(fw, "%d\t%s", line_no, val1);
-    } else if (val3 == NULL) {
+    }
+    else if (val3 == NULL)
+    {
       // Two tokens
       // printf("%d\t%s|%s", line_no, val1, val2);
 
-      if (strcmp(val2, "START\n") == 0 || strcmp(val1, "USING") == 0) {
+      if (strcmp(val2, "START\n") == 0 || strcmp(val1, "USING") == 0)
+      {
         // printf("Skip iteration\n");
 
-        if (strcmp(val1, "USING") == 0) {
+        if (strcmp(val1, "USING") == 0)
+        {
           fb = fopen("base.txt", "w");
 
           const char *temp = strtok(val2, ",");
@@ -137,7 +158,9 @@ int pass2() {
 
           fprintf(fw, "%d\t%s %s,%s", line_no, val1, val2, temp);
           printf("%d\t%s %s,%s", line_no, val1, val2, temp);
-        } else {
+        }
+        else
+        {
           fprintf(fw, "%d\t%s %s", line_no, val1, val2);
           printf("%d\t%s %s", line_no, val1, val2);
         }
@@ -153,20 +176,27 @@ int pass2() {
       const char *location = NULL;
 
       location = isInSymbolTable(temp);
-      if (location != NULL) {
+      if (location != NULL)
+      {
         fprintf(fw, "%d\t%s %s,%s", line_no, val1, temp2, location);
         printf("%d\t%s %s,%s", line_no, val1, temp2, location);
-      } else {
+      }
+      else
+      {
         fprintf(fw, "%d\t%s %s", line_no, val1, val2);
         printf("%d\t%s %s", line_no, val1, val2);
       }
 
       line_no += 4;
-    } else {
+    }
+    else
+    {
       // Three Tokens
-      if (isInMot(val1) == NULL) {
+      if (isInMot(val1) == NULL)
+      {
         // fprintf(fw, "%s %d\n", val1, line_no);
-        switch (*val3) {
+        switch (*val3)
+        {
         case 'F':
           line_no += 4;
           break;
@@ -187,11 +217,13 @@ int pass2() {
   return 0;
 }
 
-int main(void) {
+int main(void)
+{
   printf("=== Pass 1 ===\n");
   int status = pass1();
 
-  if (status != 0) {
+  if (status != 0)
+  {
     printf("Failed to parse in pass 1\n");
     return 1;
   }
@@ -199,10 +231,44 @@ int main(void) {
   printf("=== Pass 2 ===\n");
   status = pass2();
 
-  if (status != 0) {
+  if (status != 0)
+  {
     printf("Failed to parse in pass 2\n");
     return 1;
   }
 
   return 0;
 }
+
+/*
+run :
+
+gcc main.c
+./main.exe
+
+OUTPUT:
+
+=== Pass 1 ===
+0       PG1|START
+0       USING|*,15
+0       L|1,four
+4       A|1,five
+8       ST|1,temp
+16      four|DC|F'4'
+20      five|DC|F'5'
+22      temp|DS|1F
+22      END
+
+=== Pass 2 ===
+0       PG1 START
+0       USING *,15
+0       L 1,16
+4       A 1,20
+8       ST 1,22
+16      four DC F'4'
+20      five DC F'5'
+22      temp DS 1F
+22      END
+
+
+*/
